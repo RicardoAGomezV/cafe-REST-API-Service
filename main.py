@@ -105,19 +105,29 @@ def search():
     """
     Returns a JSON object containing details of cafes at a specific location.
     """
+    
+    
+    # Get the location query parameter from the request
     query_location = request.args.get("loc")
     
     # other way to do it
     # result = db.session.execute(db.select(Cafe).where(Cafe.location == query_location))
     # Note, this may get more than one cafe per location
     
-    
+    # Perform a database query to find cafes at the specified location
     result = db.session.execute(db.select(Cafe).filter_by(location=query_location))
 
+    # Retrieve all cafes that match the location from the database
     all_cafes = result.scalars().all()
+    
+    # Check if any cafes were found
     if len(all_cafes) > 0:
+        
+        # Return a JSON response containing details of all cafes at the location
         return jsonify(cafes=[cafe.to_dict() for cafe in all_cafes])
     else:
+        
+        # Return a 404 error if no cafes were found at the location
         return jsonify(error={"Not Found": "Sorry, we don't have a cafe at that location."}), 404
 
 
@@ -145,6 +155,35 @@ def post_new_cafe():
     return jsonify(response={"success": "Successfully added the new cafe."})
 
 # HTTP PUT/PATCH - Update Record
+# Updating the price of a cafe based on a particular id:
+# example "http://127.0.0.1:5000/update-price/CAFE_ID?new_price=£5.67"
+
+@app.route("/update-price/<int:cafe_id>", methods=["PATCH"])
+# https://flask.palletsprojects.com/en/3.0.x/quickstart/#variable-rules
+def patch_new_price(cafe_id):
+    
+    # Retrieve the new price from the request arguments
+    new_price = request.args.get("new_price")
+    
+    # Get the cafe object with the given id from the database
+    cafe = db.get_or_404(Cafe, cafe_id)
+    
+    # Check if the cafe exists
+    if cafe:
+        
+        # Update the coffee_price attribute of the cafe object
+        cafe.coffee_price = new_price
+        
+        # Commit the changes to the database
+        db.session.commit()
+        
+        # Return a success message in JSON format
+        return jsonify(response={"success": "Successfully updated the price."})
+    
+    else:
+        # Return an error message if the cafe with the given id is not found
+        return jsonify(error={"Not Found": "Sorry a cafe with that id was not found in the database."})
+
 
 # HTTP DELETE - Delete Record
 
