@@ -1,3 +1,4 @@
+
 import random
 from flask import Flask, jsonify, render_template, request
 from flask_sqlalchemy import SQLAlchemy
@@ -41,7 +42,7 @@ class Cafe(db.Model):
             dictionary[column.name] = getattr(self, column.name)
         return dictionary
         
-        #Method 2. Altenatively way do the same thing.
+        #Method 2. Alternatively, do the same thing.
         #return {column.name: getattr(self, column.name) for column in self.__table__.columns}
 with app.app_context():
     db.create_all()
@@ -49,16 +50,21 @@ with app.app_context():
 
 @app.route("/")
 def home():
-   
+    """
+    Renders the home page.
+    """
     return render_template("index.html")
 
 
 # HTTP GET - Read Record
 @app.route("/random", methods=["GET"])
 def get_random_cafe():
-  all_cafes = db.session.execute(db.select(Cafe).order_by(Cafe.id)).scalars().all()
-  random_cafe = random.choice(all_cafes)
-  return jsonify(cafe={
+    """
+    Returns a JSON object containing a random cafe's details.
+    """
+    all_cafes = db.session.execute(db.select(Cafe).order_by(Cafe.id)).scalars().all()
+    random_cafe = random.choice(all_cafes)
+    return jsonify(cafe={
         #Omit the id from the response
         # "id": random_cafe.id,
         "name": random_cafe.name,
@@ -76,21 +82,13 @@ def get_random_cafe():
           "coffee_price": random_cafe.coffee_price,
         }
     })
-  #NOTHER WAY TO DO IT
-#   return jsonify(id=random_cafe.id,
-#                 name=random_cafe.name,
-#                 map_url=random_cafe.map_url,
-#                 img_url= random_cafe.img_url,
-#                 location= random_cafe.location,
-#                 seats= random_cafe.seats,
-#                 has_toilet= random_cafe.has_toilet,
-#                 has_wifi=random_cafe.has_wifi,
-#                 has_sockets= random_cafe.has_sockets,
-#                 can_take_calls= random_cafe.can_take_calls,
-#                 coffee_price=random_cafe.coffee_price,)
+
 
 @app.route("/all")
 def all():
+    """
+    Returns a JSON object containing details of all cafes.
+    """
     all_cafes = db.session.execute(db.select(Cafe).order_by(Cafe.name)).scalars().all()
     
     list_of_cafes_dics=[]
@@ -104,6 +102,9 @@ def all():
 
 @app.route("/search")
 def search():
+    """
+    Returns a JSON object containing details of cafes at a specific location.
+    """
     query_location = request.args.get("loc")
     
     # other way to do it
@@ -123,6 +124,9 @@ def search():
 # HTTP POST - Create Record
 @app.route("/add", methods=['POST'])
 def post_new_cafe():
+    """
+    Adds a new cafe to the database.
+    """
     new_cafe = Cafe(
         name=request.form.get("name"),
         map_url=request.form.get("map_url"),
@@ -134,7 +138,7 @@ def post_new_cafe():
         can_take_calls=bool(request.form.get("calls")),
         seats=request.form.get("seats"),
         coffee_price=request.form.get("coffee_price"),
-)
+    )
     db.session.add(new_cafe)
     db.session.commit()   
     
