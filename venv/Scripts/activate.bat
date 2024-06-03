@@ -8,7 +8,7 @@ if defined _OLD_CODEPAGE (
     "%SystemRoot%\System32\chcp.com" 65001 > nul
 )
 
-set VIRTUAL_ENV=C:\Users\PC_User\Downloads\day-66-starting-files-cafe-api\venv
+set VIRTUAL_ENV=R:\programacion\python\python\Programas creados.py\Repositorios\cafe-REST-API-Service\venv
 
 if not defined PROMPT set PROMPT=$P$G
 
