@@ -62,26 +62,52 @@ def get_random_cafe():
     """
     Returns a JSON object containing a random cafe's details.
     """
+    
+    # Retrieve all cafes from the database, ordered by their ID
     all_cafes = db.session.execute(db.select(Cafe).order_by(Cafe.id)).scalars().all()
+    
+    # Select a random cafe from the list of all cafes
     random_cafe = random.choice(all_cafes)
+    
+    # Return the details of the random cafe in JSON format
     return jsonify(cafe={
-        #Omit the id from the response
+        # Omit the id from the response
         # "id": random_cafe.id,
+        
+        # Include the name of the cafe
         "name": random_cafe.name,
+        
+        # Include the map URL of the cafe
         "map_url": random_cafe.map_url,
+        
+        # Include the image URL of the cafe
         "img_url": random_cafe.img_url,
+        
+        # Include the location of the cafe
         "location": random_cafe.location,
         
-        #Put some properties in a sub-category
+        # Put some properties in a sub-category called "amenities"
         "amenities": {
-          "seats": random_cafe.seats,
-          "has_toilet": random_cafe.has_toilet,
-          "has_wifi": random_cafe.has_wifi,
-          "has_sockets": random_cafe.has_sockets,
-          "can_take_calls": random_cafe.can_take_calls,
-          "coffee_price": random_cafe.coffee_price,
+            # Include the number of seats available at the cafe
+            "seats": random_cafe.seats,
+            
+            # Include whether the cafe has a toilet
+            "has_toilet": random_cafe.has_toilet,
+            
+            # Include whether the cafe has WiFi
+            "has_wifi": random_cafe.has_wifi,
+            
+            # Include whether the cafe has power sockets
+            "has_sockets": random_cafe.has_sockets,
+            
+            # Include whether the cafe allows phone calls
+            "can_take_calls": random_cafe.can_take_calls,
+            
+            # Include the price of coffee at the cafe
+            "coffee_price": random_cafe.coffee_price,
         }
     })
+
 
 
 @app.route("/all")
@@ -137,22 +163,34 @@ def post_new_cafe():
     """
     Adds a new cafe to the database.
     """
-    new_cafe = Cafe(
-        name=request.form.get("name"),
-        map_url=request.form.get("map_url"),
-        img_url=request.form.get("img_url"),
-        location=request.form.get("location"),
-        has_sockets=bool(request.form.get("sockets")),
-        has_toilet=bool(request.form.get("toilet")),
-        has_wifi=bool(request.form.get("wifi")),
-        can_take_calls=bool(request.form.get("calls")),
-        seats=request.form.get("seats"),
-        coffee_price=request.form.get("coffee_price"),
-    )
-    db.session.add(new_cafe)
-    db.session.commit()   
     
-    return jsonify(response={"success": "Successfully added the new cafe."})
+    # Retrieve the API key from the request arguments
+    api_key = request.args.get("api_key")
+    
+    
+    # Check if the API key is correct
+    if api_key == "TopSecretAPIKey":
+            
+        new_cafe = Cafe(
+            name=request.form.get("name"),
+            map_url=request.form.get("map_url"),
+            img_url=request.form.get("img_url"),
+            location=request.form.get("location"),
+            has_sockets=bool(request.form.get("sockets")),
+            has_toilet=bool(request.form.get("toilet")),
+            has_wifi=bool(request.form.get("wifi")),
+            can_take_calls=bool(request.form.get("calls")),
+            seats=request.form.get("seats"),
+            coffee_price=request.form.get("coffee_price"),
+        )
+        db.session.add(new_cafe)
+        db.session.commit()   
+        
+        return jsonify(response={"success": "Successfully added the new cafe."})
+    else:
+        # Return an error message if the API key is incorrect
+        return jsonify(error={"Forbidden": "Sorry, that's not allowed. Make sure you have the correct api_key."}), 403
+
 
 # HTTP PUT/PATCH - Update Record
 # Updating the price of a cafe based on a particular id:
@@ -164,26 +202,27 @@ def patch_new_price(cafe_id):
     
     # Retrieve the new price from the request arguments
     new_price = request.args.get("new_price")
-    
-    # Get the cafe object with the given id from the database
-    cafe = db.get_or_404(Cafe, cafe_id)
-    
-    # Check if the cafe exists
-    if cafe:
+    try:
         
-        # Update the coffee_price attribute of the cafe object
-        cafe.coffee_price = new_price
-        
-        # Commit the changes to the database
-        db.session.commit()
-        
-        # Return a success message in JSON format
-        return jsonify(response={"success": "Successfully updated the price."})
+        # Get the cafe object with the given id from the database
+        cafe = db.get_or_404(Cafe, cafe_id)
     
-    else:
+    except:
         # Return an error message if the cafe with the given id is not found
-        return jsonify(error={"Not Found": "Sorry a cafe with that id was not found in the database."})
+        return jsonify(error={"Not Found": "Sorry a cafe with that id was not found in the database."}), 404
 
+    
+    # Update the coffee_price attribute of the cafe object
+    cafe.coffee_price = new_price
+    
+    # Commit the changes to the database
+    db.session.commit()
+    
+    # Return a success message in JSON format
+    return jsonify(response={"success": "Successfully updated the price."})
+
+  
+        
 
 # HTTP DELETE - Delete Record
 @app.route("/report-closed/<int:cafe_id>", methods=['DELETE'])
