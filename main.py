@@ -57,7 +57,7 @@ def home():
 
 
 # HTTP GET - Read Record
-@app.route("/random", methods=["GET"])
+@app.route("/random")
 def get_random_cafe():
     """
     Returns a JSON object containing a random cafe's details.
@@ -65,10 +65,14 @@ def get_random_cafe():
     
     # Retrieve all cafes from the database, ordered by their ID
     all_cafes = db.session.execute(db.select(Cafe).order_by(Cafe.id)).scalars().all()
+    # all_cafes = db.session.execute(db.select(Cafe))
     
     # Select a random cafe from the list of all cafes
     random_cafe = random.choice(all_cafes)
     
+    # other way to do it using the 'to_dict()' mothod
+    # return jsonify(cafe=random_cafe.to_dict())
+
     # Return the details of the random cafe in JSON format
     return jsonify(cafe={
         # Omit the id from the response
@@ -115,14 +119,25 @@ def all():
     """
     Returns a JSON object containing details of all cafes.
     """
+    
+    # Retrieve all cafes from the database, ordered by their name
     all_cafes = db.session.execute(db.select(Cafe).order_by(Cafe.name)).scalars().all()
     
-    list_of_cafes_dics=[]
+    # Initialize an empty list to hold the dictionaries of cafe details
+    list_of_cafes_dics = []
+    
+    # Loop through each cafe object
     for cafe in all_cafes:
-        cafe_dict=cafe.to_dict()
+        
+        # Convert the cafe object to a dictionary
+        cafe_dict = cafe.to_dict()
+        
+        # Add the dictionary to the list
         list_of_cafes_dics.append(cafe_dict)
         
+    # Return a JSON response containing the list of all cafes' dictionaries
     return jsonify(list_of_cafes_dics)
+
 
 
 
@@ -132,13 +147,12 @@ def search():
     Returns a JSON object containing details of cafes at a specific location.
     """
     
-    
     # Get the location query parameter from the request
     query_location = request.args.get("loc")
     
     # other way to do it
     # result = db.session.execute(db.select(Cafe).where(Cafe.location == query_location))
-    # Note, this may get more than one cafe per location
+    
     
     # Perform a database query to find cafes at the specified location
     result = db.session.execute(db.select(Cafe).filter_by(location=query_location))
