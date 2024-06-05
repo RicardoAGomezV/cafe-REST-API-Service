@@ -1,6 +1,6 @@
 
 ### Title
-cafe-REST-API-Service
+cafe-REST-API-Service (https://documenter.getpostman.com/view/35953061/2sA3Qy5UT4)
 
 ### Description
 Web application developed with Flask and SQLAlchemy that manages a database of cafes. It provides endpoints to perform CRUD operations (Create, Read, Update, Delete) on cafe information, including details such as name, location, coffee price, and available amenities (WiFi, toilets, sockets, etc.). This API is ideal for applications that need to programmatically access and manage cafe information.
@@ -61,4 +61,4 @@ Deletes a cafe from the database. Requires a valid `api_key`.
 - **Cafe Management**: The API allows efficient management of cafe information.
 - **CRUD Operations**: Complete implementation of CRUD operations to handle data.
 - **Ease of Use**: The API is user-friendly and can be integrated into other applications.
-- **Comprehensive Documentation**: The API is well-documented, making it easy for other developers to use.
+- **Comprehensive Documentation**: The API is well-documented, making it easy for other developers to use. (https://documenter.getpostman.com/view/35953061/2sA3Qy5UT4)
