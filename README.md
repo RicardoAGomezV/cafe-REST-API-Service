@@ -62,3 +62,15 @@ Deletes a cafe from the database. Requires a valid `api_key`.
 - **CRUD Operations**: Complete implementation of CRUD operations to handle data.
 - **Ease of Use**: The API is user-friendly and can be integrated into other applications.
 - **Comprehensive Documentation**: The API is well-documented, making it easy for other developers to use. (https://documenter.getpostman.com/view/35953061/2sA3Qy5UT4)
+
+  ## img1
+  ![img1](https://github.com/bardack134/cafe-REST-API-Service/assets/142977989/4ac61699-fd66-43d8-bf1b-73323ac1308d)
+
+  ## img2
+![img2](https://github.com/bardack134/cafe-REST-API-Service/assets/142977989/2704d4f8-8091-45ae-b5ca-c39afbea3e86)
+
+
+
+
+
+  
